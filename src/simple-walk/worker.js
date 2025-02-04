@@ -105,10 +105,11 @@ class MCBot {
                     this.bot.movement.steer(yaw)
                 });
             } catch (e) {
-                console.log(`[Error in movement] ${e}`);
+                throw e;
             }
         });
         
+        this.bot.on('chat', (username, message) => onChat(parentPort, username, message));
     }    
 }
 
