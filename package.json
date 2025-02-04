@@ -3,6 +3,7 @@
     "express": "^4.21.2",
     "minecraft-data": "^3.69.0",
     "mineflayer": "^4.20.1",
+    "mineflayer-movement": "^0.4.4",
     "mineflayer-pathfinder": "^2.4.5",
     "prom-client": "^15.1.3"
   },

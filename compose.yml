@@ -1,21 +1,21 @@
-services:
-  bot-1:
-    build:
-      context: .
-    environment:
-      NODE_ENV: production
-      BOT_COUNT: 10
-      BOT_JOIN_INTERVAL: 100
-      BOT_HOST: "10.108.126.51"
-      BOT_PORT: 25565
-      BOX_WIDTH: 1600
-      BOX_CENTER_X: 0
-      BOX_CENTER_Z: 0
-      WORKER_TO_RUN: idle
-    deploy:
-      replicas: 1
-    ports:
-      - "9090:9090" 
+services:  
+ # bot-1:
+ #   build:
+ #      context: .
+ #    environment:
+ #      NODE_ENV: production
+ #      BOT_COUNT: 10
+ #      BOT_JOIN_INTERVAL: 100
+ #      BOT_HOST: "10.108.126.51"
+ #      BOT_PORT: 25565
+ #      BOX_WIDTH: 1600
+ #      BOX_CENTER_X: 0
+ #      BOX_CENTER_Z: 0
+ #      WORKER_TO_RUN: idle
+ #    deploy:
+ #      replicas: 1
+ #    ports:
+ #      - "9090:9090" 
   # bot-2:
   #   build:
   #     context: .
@@ -31,3 +31,18 @@ services:
   #     WORKER_TO_RUN: walk
   #   deploy:
   #     replicas: 1
+   bot-3:
+     build:
+       context: .
+     environment:
+       NODE_ENV: production
+       BOT_COUNT: 100
+       BOT_JOIN_INTERVAL: 100
+       BOT_HOST: "10.108.126.51"
+       BOT_PORT: 25565
+       BOX_WIDTH: 1600
+       BOX_CENTER_X: 0
+       BOX_CENTER_Z: 0
+       WORKER_TO_RUN: simple-walk
+     deploy:
+       replicas: 1
