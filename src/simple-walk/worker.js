@@ -47,7 +47,7 @@ class MCBot {
         let z = this.box_center.z + getRandomInt(this.box_width) - (this.box_width / 2);
         let ts = Date.now() / 1000;
         console.log(`[WORKER] ${ts} - bot ${this.bot.username} should walk from ${this.bot.entity.position} to ${v(x, this.bot.entity.position.y, z)}`)
-        return new Vec3(x, this.bot.entity.position, z);
+        return new Vec3(x, this.bot.entity.position.y, z);
     }
 
     initEvents() {
@@ -95,14 +95,12 @@ class MCBot {
                         const yaw = this.bot.movement.getYaw(240, 15, 1)
                         this.bot.movement.steer(yaw)
                         // check if the bot has reached the target
-                        const botPosXZ = new Vec3(this.bot.entity.position.x, 0, this.bot.entity.position.z);
-                        const targetXZ = new Vec3(target.x, 0, target.z);
+                        const botPosXZ = new Vec3(this.bot.entity.position.x, this.bot.entity.position.y, this.bot.entity.position.z);
+                        const targetXZ = new Vec3(target.x, this.bot.entity.position.y, target.z);
                         if (botPosXZ.distanceTo(targetXZ) < 1) {
                             target_reached = true;
                         }
                     }
-                    const yaw = this.bot.movement.getYaw(240, 15, 1)
-                    this.bot.movement.steer(yaw)
                 });
             } catch (e) {
                 throw e;
