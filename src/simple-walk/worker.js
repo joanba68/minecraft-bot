@@ -20,6 +20,7 @@ class MCBot {
         this.version = workerData.version;
         this.box_width = workerData.box_width;
         this.box_center = workerData.box_center;
+        this.update_interval = workerData.update_interval;
 
         if (!this.username || !this.host || !this.port || !this.version) {
             console.log('Missing required parameters');
@@ -84,24 +85,26 @@ class MCBot {
                 let target_reached = false;
                 let target = this.newTarget();
                 this.bot.movement.heuristic.get('proximity').target(target);
-                this.bot.on("physicsTick", async () => { 
-                    
+                setInterval(async () => {
                     if (target_reached) { // new target when the current one is reached
                         target_reached = false;
                         target = this.newTarget();
                         this.bot.movement.heuristic.get('proximity').target(target);
                     }
+        
                     if (!target_reached) { // move towards the target
-                        const yaw = this.bot.movement.getYaw(240, 15, 1)
-                        this.bot.movement.steer(yaw)
-                        // check if the bot has reached the target
+                        const yaw = this.bot.movement.getYaw(240, 15, 1);
+                        this.bot.movement.steer(yaw);
+        
+                        // Check if the bot has reached the target
                         const botPosXZ = new Vec3(this.bot.entity.position.x, this.bot.entity.position.y, this.bot.entity.position.z);
                         const targetXZ = new Vec3(target.x, this.bot.entity.position.y, target.z);
-                        if (botPosXZ.distanceTo(targetXZ) < 1) {
+        
+                        if (botPosXZ.distanceTo(targetXZ) < 8) {
                             target_reached = true;
                         }
                     }
-                });
+                }, this.update_interval); // Check the bot position every {update_interval} milliseconds
             } catch (e) {
                 throw e;
             }
