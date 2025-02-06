@@ -79,7 +79,7 @@ function initializeWorker(botUsername) {
                 resolve(elapsed);
             } else if (message.type === "metric") {
                 const { sourceServer, targetServer, latency } = message;
-                console.log(`[MASTER] Bot ${botUsername} - Latency from ${sourceServer} to ${targetServer}: ${latency} ms`);
+                //console.log(`[MASTER] Bot ${botUsername} - Latency from ${sourceServer} to ${targetServer}: ${latency} s`);
                 metric.labels(sourceServer, targetServer).set(latency);
             }
         });
