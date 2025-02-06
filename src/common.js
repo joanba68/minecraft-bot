@@ -51,7 +51,7 @@ class AbstractBot {
         //     console.log(`[WORKER] Bot ${this.bot.username} received message from ${username}: ${jsonMsg}`);
         // });
         this.bot.on('message', async (jsonMsg, position, sender, verified) => {
-            console.log(`[WORKER] Bot ${this.username} received message at ${position} from ${sender}: ${jsonMsg}`);
+            //console.log(`[WORKER] Bot ${this.username} received message at ${position} from ${sender}: ${jsonMsg}`);
             await this.onMessage(jsonMsg, position);
         });
     }
