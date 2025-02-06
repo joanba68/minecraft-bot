@@ -75,11 +75,6 @@ class MCBot extends AbstractBot {
                 throw e;
             }
         });
-        
-        this.bot.on('message', async (jsonMsg, position, sender, verified) => {
-            console.log(`[WORKER] Bot ${this.username} received message at ${position} from ${sender}: ${jsonMsg}`);
-            await super.onMessage(jsonMsg, position);
-        });
     }    
 }
 

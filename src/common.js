@@ -6,6 +6,8 @@ class AbstractBot {
         this.host = workerData.host;
         this.port = workerData.port;
         this.version = workerData.version;
+
+        this.response_interval = workerData.response_interval;
         
         this.playerServerMap = new Map();
         
@@ -25,6 +27,12 @@ class AbstractBot {
         this.bot.on('login', () => {
             console.log(`[WORKER] Bot ${this.username} logged in`);
             parentPort.postMessage({ type: 'login', status: 'success', username: this.username });
+
+            // Start the response interval
+            setInterval(() => {
+                const timestamp = Date.now();
+                this.bot.chat(`${timestamp}`);
+            }, this.response_interval);
         });
         this.bot.on('end', (e) => {
             console.log(`[WORKER] Bot ${this.username} disconnected: ${e}`);
@@ -38,12 +46,20 @@ class AbstractBot {
             console.log(`[WORKER] Bot ${this.username} error: ${e}`);
             process.exit(-1);
         });
+
+        // this.bot.on('chat', (username, message, translate, jsonMsg, matches) => {
+        //     console.log(`[WORKER] Bot ${this.bot.username} received message from ${username}: ${jsonMsg}`);
+        // });
+        this.bot.on('message', async (jsonMsg, position, sender, verified) => {
+            console.log(`[WORKER] Bot ${this.username} received message at ${position} from ${sender}: ${jsonMsg}`);
+            await this.onMessage(jsonMsg, position);
+        });
     }
 
-    onMessage(jsonMsg, position) {
+    async onMessage(jsonMsg, position) {
         switch (position) {
             case 'chat':
-                this.onChat(jsonMsg);
+                await this.onChat(jsonMsg);
                 break;
             case 'system':
                 this.parseSlistMessage(jsonMsg);

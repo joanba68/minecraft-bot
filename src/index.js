@@ -18,6 +18,7 @@ const movementBoxWidth = parseInt(process.env.BOX_WIDTH) || 10 * 16;
 const boxCenterX = parseInt(process.env.BOX_CENTER_X) || NaN;
 const boxCenterZ = parseInt(process.env.BOX_CENTER_Z) || NaN;
 const updateInterval = parseInt(process.env.UPDATE_INTERVAL) || 2000;
+const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000;
 const prometheusPort = parseInt(process.env.PROMETHEUS_PORT) || 9090;
 
 // Worker script selection
@@ -64,6 +65,7 @@ function initializeWorker(botUsername) {
         box_width: movementBoxWidth,
         box_center: boxCenter,
         update_interval: updateInterval,
+        response_interval: responseInterval,
     };
     const startTimestamp = Date.now();
 
