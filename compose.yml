@@ -36,7 +36,7 @@ services:
       context: .
     environment:
       NODE_ENV: production
-      BOT_COUNT: 10
+      BOT_COUNT: 50
       BOT_JOIN_INTERVAL: 100
       BOT_HOST: "10.108.126.51"
       BOT_PORT: 25565

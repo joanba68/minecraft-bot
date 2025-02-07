@@ -49,8 +49,10 @@ app.listen(prometheusPort, () => {
     console.log(`Prometheus metrics available at http://localhost:${prometheusPort}/metrics`);
 });
 
+const playerServerMap = new Map();
+
 // Function to initialize and start a bot worker
-function initializeWorker(botUsername) {
+function initializeWorker(botUsername, first) {
     let boxCenter = null;
 
     if (!isNaN(boxCenterX) && !isNaN(boxCenterZ)) {
@@ -71,6 +73,7 @@ function initializeWorker(botUsername) {
 
     return new Promise((resolve, reject) => {
         const worker = new Worker(`./src/${workerScript}/worker.js`, { workerData });
+        activeWorkers.add(worker);
 
         worker.on("message", (message) => {
             if (message.type === "login" && message.status === "success" && message.username === botUsername) {
@@ -81,6 +84,16 @@ function initializeWorker(botUsername) {
                 const { sourceServer, targetServer, latency } = message;
                 //console.log(`[MASTER] Bot ${botUsername} - Latency from ${sourceServer} to ${targetServer}: ${latency} s`);
                 metric.labels(sourceServer, targetServer).set(latency);
+            } else if (message.type === "slist") {
+                const { server, players } = message;
+
+                for (const player of players) {
+                    playerServerMap.set(player, server);
+                }
+
+                for (const w of activeWorkers) {
+                    w.postMessage({ type: "slist", playerServerMap });
+                }
             }
         });
         worker.on("error", (error) => {
@@ -93,11 +106,17 @@ function initializeWorker(botUsername) {
             activeWorkers.delete(botUsername);
             reject(exitCode);
         });
+
+        if (first) {
+            // master worker
+            worker.postMessage({ type: "master" });
+        }
     });
 }
 
 // Main function to manage bot spawning
 async function manageBotSpawning() {
+    let first = true;
     while (true) {
         const timestamp = Date.now();
         console.log(`[MASTER] ${timestamp} - Active bots: ${activeWorkers.size}`);
@@ -105,8 +124,8 @@ async function manageBotSpawning() {
         if (activeWorkers.size < maxBotCount) {
             console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${activeWorkers.size} -> Spawning new bot!`);
             const botUsername = `b${timestamp}`;
-            const loginTime = await initializeWorker(botUsername);
-            activeWorkers.add(botUsername);
+            const loginTime = await initializeWorker(botUsername, first);
+            first = false;
             const remainingTime = Math.max(0, botSpawnInterval - loginTime);
             await delay(remainingTime);
         } else {

@@ -1,4 +1,5 @@
 import { createBot } from 'mineflayer';
+
 class AbstractBot {
     constructor(parentPort, workerData) {
         this.parentPort = parentPort;
@@ -50,19 +51,32 @@ class AbstractBot {
         // this.bot.on('chat', (username, message, translate, jsonMsg, matches) => {
         //     console.log(`[WORKER] Bot ${this.bot.username} received message from ${username}: ${jsonMsg}`);
         // });
-        this.bot.on('message', async (jsonMsg, position, sender, verified) => {
+        this.bot.on('message', (jsonMsg, position, sender, verified) => {
             //console.log(`[WORKER] Bot ${this.username} received message at ${position} from ${sender}: ${jsonMsg}`);
-            await this.onMessage(jsonMsg, position);
+            this.onMessage(jsonMsg, position);
+        });
+
+        this.parentPort.on('message', (msg) => {
+            // master worker
+            if (msg.type === 'master') {
+                setInterval(() => {
+                    this.bot.chat('/slist');
+                }, this.response_interval);
+            } else if (msg.type === 'slist') {
+                const { playerServerMap } = msg;
+                for (const [player, server] of playerServerMap)
+                    this.playerServerMap.set(player, server);
+            }
         });
     }
 
-    async onMessage(jsonMsg, position) {
+    onMessage(jsonMsg, position) {
         switch (position) {
-            case 'chat':
-                await this.onChat(jsonMsg);
-                break;
             case 'system':
                 this.parseSlistMessage(jsonMsg);
+                break;
+            case 'chat':
+                this.onChat(jsonMsg);
                 break;
             default:
                 console.error(`Unknown message position: ${position}`);
@@ -73,25 +87,36 @@ class AbstractBot {
     parseSlistMessage(msg) {
         if (!msg.extra || msg.extra.length < 3 || !msg.extra[0].text.startsWith('[')) return; // Ignore unrelated messages
         
-        const serverName = msg.extra[0].text.replace(/\[|\]/g, ''); // Extract server name
+        const server = msg.extra[0].text.replace(/\[|\]/g, ''); // Extract server name
         const playerListText = msg.extra[2].text; // Extract player names
         
         if (!playerListText) return; // Skip empty player lists
         
         const players = playerListText.split(', ').map(p => p.trim());
         players.forEach(player => {
-            this.playerServerMap.set(player, serverName);
+            this.playerServerMap.set(player, server);
+        });
+
+        this.parentPort.postMessage({
+            type: 'slist',
+            server,
+            players,
         });
     }
 
-    async onChat(message) {
+    onChat(message) {
         const now = Date.now();
 
         const username = message.with[0].text;
         const timestamp = parseInt(message.with[1].text);
         
-        const sourceServer = await this.lookupPlayer(username);
-        const targetServer = await this.lookupPlayer(this.username);
+        const sourceServer = this.playerServerMap.get(username);
+        const targetServer = this.playerServerMap.get(this.username);
+
+        if (!sourceServer || !targetServer) {
+            console.log(`[WORKER] Bot ${this.username} could not find server for ${username}`);
+            return;
+        }
 
         const latency = (now - timestamp) / 1000; // in seconds
 
@@ -101,27 +126,6 @@ class AbstractBot {
             targetServer,
             latency,
         });
-    }
-
-    async lookupPlayer(username, retries = 3) {
-        let server = this.playerServerMap.get(username);
-        let attempts = 0;
-        while (!server) {
-            console.warn(`Player ${username} not found in playerServerMap. Requesting slist...`);
-            this.bot.chat('/slist');
-            try {
-                await asyncCallWithTimeout(this.bot.awaitMessage(/There are \d+ out of \d+ players online/), 3000);
-            } catch {
-                console.warn('Failed to receive slist message within 3 seconds.');
-            }
-            server = this.playerServerMap.get(username);
-            attempts++;
-            if (attempts >= retries) {
-                console.error(`Failed to find player ${username} in playerServerMap after ${retries} attempts.`);
-                break;
-            }
-        }
-        return server;
     }
 }
 
