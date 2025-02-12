@@ -9,6 +9,7 @@ class AbstractBot {
         this.version = workerData.version;
 
         this.response_interval = workerData.response_interval;
+        this.enable_response_metric = workerData.enable_response_metric;
         
         this.playerServerMap = new Map();
         
@@ -32,7 +33,8 @@ class AbstractBot {
             // Start the response interval
             setInterval(() => {
                 const timestamp = Date.now();
-                this.bot.chat(`${timestamp}`);
+                if (this.enable_response_metric)
+                    this.bot.chat(`${timestamp}`);
             }, this.response_interval);
         });
         this.bot.on('end', (e) => {

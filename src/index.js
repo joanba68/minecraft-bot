@@ -20,6 +20,7 @@ const boxCenterZ = parseInt(process.env.BOX_CENTER_Z) || NaN;
 const updateInterval = parseInt(process.env.UPDATE_INTERVAL) || 2000;
 const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000;
 const prometheusPort = parseInt(process.env.PROMETHEUS_PORT) || 9090;
+const enableResponseMetric = process.env.RESPONSE_METRIC === "true";
 
 // Worker script selection
 const workerScript = process.env.WORKER_TO_RUN || "idle";
@@ -68,6 +69,7 @@ function initializeWorker(botUsername, first) {
         box_center: boxCenter,
         update_interval: updateInterval,
         response_interval: responseInterval,
+        enable_response_metric: enableResponseMetric,
     };
     const startTimestamp = Date.now();
 
