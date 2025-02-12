@@ -29,13 +29,6 @@ class AbstractBot {
         this.bot.on('login', () => {
             console.log(`[WORKER] Bot ${this.username} logged in`);
             parentPort.postMessage({ type: 'login', status: 'success', username: this.username });
-
-            // Start the response interval
-            setInterval(() => {
-                const timestamp = Date.now();
-                if (this.enable_response_metric)
-                    this.bot.chat(`${timestamp}`);
-            }, this.response_interval);
         });
         this.bot.on('end', (e) => {
             console.log(`[WORKER] Bot ${this.username} disconnected: ${e}`);
@@ -63,6 +56,9 @@ class AbstractBot {
             if (msg.type === 'master') {
                 setInterval(() => {
                     this.bot.chat('/slist');
+                    const timestamp = Date.now();
+                    if (this.enable_response_metric)
+                        this.bot.chat(`${timestamp}`);
                 }, this.response_interval);
             } else if (msg.type === 'slist') {
                 const { playerServerMap } = msg;
