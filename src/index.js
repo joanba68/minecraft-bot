@@ -71,7 +71,6 @@ function initializeWorker(botUsername, first) {
         response_interval: responseInterval,
         enable_response_metric: enableResponseMetric,
     };
-    const startTimestamp = Date.now();
 
     return new Promise((resolve, reject) => {
         const worker = new Worker(`./src/${workerScript}/worker.js`, { workerData });
@@ -80,8 +79,7 @@ function initializeWorker(botUsername, first) {
         worker.on("message", (message) => {
             if (message.type === "login" && message.status === "success" && message.username === botUsername) {
                 console.log(`[MASTER] Bot ${botUsername} is ready!`);
-                const elapsed = Date.now() - startTimestamp;
-                resolve(elapsed);
+                resolve();
             } else if (message.type === "metric") {
                 const { sourceServer, targetServer, latency } = message;
                 //console.log(`[MASTER] Bot ${botUsername} - Latency from ${sourceServer} to ${targetServer}: ${latency} s`);
@@ -126,9 +124,9 @@ async function manageBotSpawning() {
         if (activeWorkers.size < maxBotCount) {
             console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${activeWorkers.size} -> Spawning new bot!`);
             const botUsername = `b${timestamp}`;
-            const loginTime = await initializeWorker(botUsername, first);
+            await initializeWorker(botUsername, first);
             first = false;
-            const remainingTime = Math.max(0, botSpawnInterval - loginTime);
+            const remainingTime = Math.max(0, botSpawnInterval - (Date.now() - timestamp));
             await delay(remainingTime);
         } else {
             console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${activeWorkers.size} --> Sufficient bots connected`);
