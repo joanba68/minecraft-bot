@@ -54,12 +54,14 @@ class AbstractBot {
         this.parentPort.on('message', (msg) => {
             // master worker
             if (msg.type === 'master') {
-                setInterval(() => {
-                    this.bot.chat('/slist');
-                    const timestamp = Date.now();
-                    if (this.enable_response_metric)
-                        this.bot.chat(`${timestamp}`);
-                }, this.response_interval);
+                this.bot.once('spawn', () => {
+                    setInterval(() => {
+                        this.bot.chat('/slist');
+                        const timestamp = Date.now();
+                        if (this.enable_response_metric)
+                            this.bot.chat(`${timestamp}`);
+                    }, this.response_interval);
+                });
             } else if (msg.type === 'slist') {
                 const { playerServerMap } = msg;
                 for (const [player, server] of playerServerMap)
