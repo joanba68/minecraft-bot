@@ -47,6 +47,7 @@ class MCBot extends AbstractBot {
             if (this.box_center == null) {
                 this.box_center = this.bot.entity.position;
             }
+            
             try{
                 let target_reached = false;
                 let target = this.newTarget();
