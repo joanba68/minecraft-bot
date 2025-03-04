@@ -1,11 +1,8 @@
-import { plugin } from 'mineflayer-movement';
-import pkg from 'mineflayer-movement';
-const { movement } = pkg;
+import { plugin as movement} from 'mineflayer-movement';
 import { Vec3 } from 'vec3';
 import v from "vec3";
 import { workerData, parentPort, threadId } from "worker_threads";
 import { AbstractBot } from '../common.js';
-import { clear } from 'console';
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -18,8 +15,10 @@ class MCBot extends AbstractBot {
 
         this.box_width = workerData.box_width;
         this.box_center = workerData.box_center;
-        this.update_interval = workerData.update_interval;
+        this.walk_update_interval = workerData.walk_update_interval;
         this.place_block_interval = workerData.place_block_interval;
+        this.inventarySlot = 44; // most right slot in the inventory
+        this.start = true;
 
         this.initEvents();
     }
@@ -42,14 +41,14 @@ class MCBot extends AbstractBot {
                     //console.log(`[WORKER] Bot ${this.username} has stopped moving.`);
                     resolve();
                 }
-            }, 100); // Check every 100mss
+            }, 100); // Check every 100ms
         });
     }
 
+
     async build() {
-        // Stop bot movement temporarily
-        this.bot.clearControlStates();
         // Wait for the bot to stop moving
+        this.bot.clearControlStates();
         await this.waitForBotToStop();
     
         const referenceBlock = this.bot.blockAt(this.bot.entity.position.offset(0, -1, 2));
@@ -57,7 +56,11 @@ class MCBot extends AbstractBot {
             await this.bot.placeBlock(referenceBlock, new Vec3(0, 1, 0));
             await this.bot.look(this.bot.entity.yaw, 0); // Reset pitch to 0 (neutral position)
         } catch (e) {
-            throw(e);
+            if (e instanceof Error && e.message === "must be holding an item to place") {
+                console.error(`[WORKER] Bot ${this.username} is not holding any block to place.`);
+            } else {
+                throw(e);
+            }
         }
     }
 
@@ -121,7 +124,12 @@ class MCBot extends AbstractBot {
                         target_reached = true;
                     }
                 }
-            }, this.update_interval); // Check the bot position every {update_interval} milliseconds
+
+                if (this.inventarySlot <= 36) { // if no blocks available in the inventory, stop placing/digging blocks
+                    clearInterval(placeBlockInterval);
+                }
+
+            }, this.walk_update_interval); // Check the bot position every {update_interval} milliseconds
         } catch (e) {
             clearInterval(placeBlockInterval);
             clearInterval(moveInterval);
@@ -136,15 +144,28 @@ class MCBot extends AbstractBot {
                 this.box_center = this.bot.entity.position;
             }
 
-            this.bot.loadPlugin(plugin);
+            this.bot.loadPlugin(movement);
             const { Default } = this.bot.movement.goals // default movement goal
             this.bot.movement.setGoal(Default)
-            // wait until bot has blocks in inventory
-            this.bot.inventory.once('updateSlot:36', async (oldItem, newItem) => {
-                //console.log(`[WORKER] updated slot 36 from ${JSON.stringify(oldItem)} to ${JSON.stringify(newItem)}`);
-                if (newItem.name === "grass_block") {
-                    console.log(`[WORKER] ${this.username} recieved ${JSON.stringify(newItem.name)}`);
-                    await this.move();
+
+            this.bot.inventory.on('updateSlot:36', async (oldItem, newItem) => {
+                try {
+                    //console.log(`[WORKER] updated slot 36 from ${JSON.stringify(oldItem)} to ${JSON.stringify(newItem)}`);
+                    if (newItem.name === "grass_block") {
+                        if (this.start) {
+                            console.log(`[WORKER] ${this.username} recieved ${JSON.stringify(newItem.name)}`);
+                            this.start = false;
+                            await this.move();
+                        }
+                    }
+                } catch (e) {
+                    if (this.inventarySlot > 36) {
+                        console.log(`[WORKER] ${this.username} waiting for bot to change item from slot ${this.inventarySlot} to slot 36`);
+                        await this.bot.moveSlotItem(this.inventarySlot, 36); // Move the block from the inventory to the hand
+                        this.inventarySlot--;
+                    } else {
+                        console.log(`[WORKER] ${this.username} failed to change item from slot ${this.inventarySlot} to slot 36`);
+                    }
                 }
             });
         });

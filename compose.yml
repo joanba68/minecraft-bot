@@ -36,14 +36,14 @@ services:
   #     context: .
   #   environment:
   #     NODE_ENV: production
-  #     BOT_COUNT: 50
+  #     BOT_COUNT: 8
   #     BOT_JOIN_INTERVAL: 100
   #     BOT_HOST: "10.108.126.51"
   #     BOT_PORT: 25565
   #     BOX_WIDTH: 800
   #     BOX_CENTER_X: 0
   #     BOX_CENTER_Z: 0
-  #     UPDATE_INTERVAL: 2000
+  #     WALK_UPDATE_INTERVAL: 2000
   #     RESPONSE_METRIC: true
   #     RESPONSE_INTERVAL: 1000
   #     WORKER_TO_RUN: simple-walk
@@ -61,7 +61,7 @@ services:
       BOX_WIDTH: 800
       BOX_CENTER_X: 0
       BOX_CENTER_Z: 0
-      UPDATE_INTERVAL: 2000
+      WALK_UPDATE_INTERVAL: 2000
       PLACE_BLOCK_INTERVAL: 5000
       RESPONSE_METRIC: false
       RESPONSE_INTERVAL: 1000
@@ -73,14 +73,14 @@ services:
   #     context: .
   #   environment:
   #     NODE_ENV: production
-  #     BOT_COUNT: 10
+  #     BOT_COUNT: 5
   #     BOT_JOIN_INTERVAL: 100
   #     BOT_HOST: "10.108.126.51"
   #     BOT_PORT: 25565
   #     BOX_WIDTH: 800
   #     BOX_CENTER_X: 0
   #     BOX_CENTER_Z: 0
-  #     UPDATE_INTERVAL: 2000
+  #     WALK_UPDATE_INTERVAL: 2000
   #     RESPONSE_METRIC: false
   #     RESPONSE_INTERVAL: 1000
   #     WORKER_TO_RUN: pvp

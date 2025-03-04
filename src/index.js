@@ -17,7 +17,7 @@ const maxBotCount = parseInt(process.env.BOT_COUNT) || 1;
 const movementBoxWidth = parseInt(process.env.BOX_WIDTH) || 10 * 16;
 const boxCenterX = parseInt(process.env.BOX_CENTER_X) || NaN;
 const boxCenterZ = parseInt(process.env.BOX_CENTER_Z) || NaN;
-const updateInterval = parseInt(process.env.UPDATE_INTERVAL) || 2000;
+const walkUpdateInterval = parseInt(process.env.WALK_UPDATE_INTERVAL) || 2000;
 const placeBlockInterval = parseInt(process.env.PLACE_BLOCK_INTERVAL) || 5000;
 const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000;
 const prometheusPort = parseInt(process.env.PROMETHEUS_PORT) || 9090;
@@ -68,7 +68,7 @@ function initializeWorker(botUsername, first) {
         username: botUsername,
         box_width: movementBoxWidth,
         box_center: boxCenter,
-        update_interval: updateInterval,
+        walk_update_interval: walkUpdateInterval,
         place_block_interval: placeBlockInterval,
         response_interval: responseInterval,
         enable_response_metric: enableResponseMetric,

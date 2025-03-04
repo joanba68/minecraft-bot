@@ -55,12 +55,13 @@ class AbstractBot {
             // master worker
             if (msg.type === 'master') {
                 this.bot.once('spawn', () => {
-                    setInterval(() => {
-                        this.bot.chat('/slist');
-                        const timestamp = Date.now();
-                        if (this.enable_response_metric)
+                    if (this.enable_response_metric) {
+                        setInterval(() => {
+                            this.bot.chat('/slist');
+                            const timestamp = Date.now();
                             this.bot.chat(`${timestamp}`);
-                    }, this.response_interval);
+                        }, this.response_interval);
+                    }
                 });
             } else if (msg.type === 'slist') {
                 const { playerServerMap } = msg;

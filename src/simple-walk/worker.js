@@ -1,6 +1,4 @@
-import { plugin } from 'mineflayer-movement';
-import pkg from 'mineflayer-movement';
-const { movement } = pkg;
+import { plugin as movement } from 'mineflayer-movement';
 import { Vec3 } from 'vec3';
 import v from "vec3";
 
@@ -19,7 +17,7 @@ class MCBot extends AbstractBot {
 
         this.box_width = workerData.box_width;
         this.box_center = workerData.box_center;
-        this.update_interval = workerData.update_interval;
+        this.walk_update_interval = workerData.walk_update_interval;
 
         this.initEvents();
     }
@@ -37,7 +35,7 @@ class MCBot extends AbstractBot {
         this.bot.once("spawn", async () => {
             console.log(`[WORKER] Bot ${this.username} spawned`);
 
-            this.bot.loadPlugin(plugin);
+            this.bot.loadPlugin(movement);
             const { Default } = this.bot.movement.goals // default movement goal
             this.bot.movement.setGoal(Default)
             this.bot.setControlState("forward", true) // bot can move forward
@@ -71,7 +69,7 @@ class MCBot extends AbstractBot {
                             target_reached = true;
                         }
                     }
-                }, this.update_interval); // Check the bot position every {update_interval} milliseconds
+                }, this.walk_update_interval); // Check the bot position every {update_interval} milliseconds
             } catch (e) {
                 throw e;
             }
