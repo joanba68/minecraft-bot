@@ -3,6 +3,7 @@ import { Vec3 } from 'vec3';
 import v from "vec3";
 import { workerData, parentPort, threadId } from "worker_threads";
 import { AbstractBot } from '../common.js';
+import { setUncaughtExceptionCaptureCallback } from 'process';
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -104,35 +105,24 @@ class MCBot extends AbstractBot {
             }
         }, this.place_block_interval);
 
-        try {
-            setInterval(async () => {
-                if (target_reached) { // new target when the current one is reached
-                    target_reached = false;
-                    target = this.newTarget();
+        try{
+            const moveInterval = setInterval(async () => {
+                // Check if the bot has reached the current target
+                if (this.bot.entity.position.distanceTo(target) < 8) {
+                    target = this.newTarget(); // Generate a new random target
                     this.bot.movement.heuristic.get('proximity').target(target);
-                }
-    
-                if (!target_reached) { // move towards the target
+                } else {
+                    // Steer towards the current target
                     const yaw = this.bot.movement.getYaw(240, 15, 1);
                     this.bot.movement.steer(yaw);
-    
-                    // Check if the bot has reached the target
-                    const botPosXZ = new Vec3(this.bot.entity.position.x, this.bot.entity.position.y, this.bot.entity.position.z);
-                    const targetXZ = new Vec3(target.x, this.bot.entity.position.y, target.z);
-    
-                    if (botPosXZ.distanceTo(targetXZ) < 8) {
-                        target_reached = true;
-                    }
                 }
-
                 if (this.inventarySlot <= 36) { // if no blocks available in the inventory, stop placing/digging blocks
                     clearInterval(placeBlockInterval);
                 }
-
             }, this.walk_update_interval); // Check the bot position every {update_interval} milliseconds
         } catch (e) {
-            clearInterval(placeBlockInterval);
             clearInterval(moveInterval);
+            clearInterval(placeBlockInterval);
             throw e;
         }
     }

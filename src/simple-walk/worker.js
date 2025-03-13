@@ -47,30 +47,22 @@ class MCBot extends AbstractBot {
             }
             
             try{
-                let target_reached = false;
                 let target = this.newTarget();
                 this.bot.movement.heuristic.get('proximity').target(target);
-                setInterval(async () => {
-                    if (target_reached) { // new target when the current one is reached
-                        target_reached = false;
-                        target = this.newTarget();
+
+                const moveInterval = setInterval(async () => {
+                    // Check if the bot has reached the current target
+                    if (this.bot.entity.position.distanceTo(target) < 8) {
+                        target = this.newTarget(); // Generate a new random target
                         this.bot.movement.heuristic.get('proximity').target(target);
-                    }
-        
-                    if (!target_reached) { // move towards the target
+                    } else {
+                        // Steer towards the current target
                         const yaw = this.bot.movement.getYaw(240, 15, 1);
                         this.bot.movement.steer(yaw);
-        
-                        // Check if the bot has reached the target
-                        const botPosXZ = new Vec3(this.bot.entity.position.x, this.bot.entity.position.y, this.bot.entity.position.z);
-                        const targetXZ = new Vec3(target.x, this.bot.entity.position.y, target.z);
-        
-                        if (botPosXZ.distanceTo(targetXZ) < 8) {
-                            target_reached = true;
-                        }
                     }
                 }, this.walk_update_interval); // Check the bot position every {update_interval} milliseconds
             } catch (e) {
+                clearInterval(moveInterval);
                 throw e;
             }
         });

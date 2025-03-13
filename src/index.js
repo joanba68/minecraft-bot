@@ -20,6 +20,8 @@ const boxCenterZ = parseInt(process.env.BOX_CENTER_Z) || NaN;
 const walkUpdateInterval = parseInt(process.env.WALK_UPDATE_INTERVAL) || 2000;
 const placeBlockInterval = parseInt(process.env.PLACE_BLOCK_INTERVAL) || 5000;
 const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000;
+const attackInterval = parseInt(process.env.ATTACK_INTERVAL) || 10000;
+const attackCooldown = parseInt(process.env.ATTACK_COOLDOWN) || 10000;
 const prometheusPort = parseInt(process.env.PROMETHEUS_PORT) || 9090;
 const enableResponseMetric = process.env.RESPONSE_METRIC === "true";
 
@@ -71,6 +73,8 @@ function initializeWorker(botUsername, first) {
         walk_update_interval: walkUpdateInterval,
         place_block_interval: placeBlockInterval,
         response_interval: responseInterval,
+        attack_interval: attackInterval,
+        attack_cooldown: attackCooldown,
         enable_response_metric: enableResponseMetric,
     };
 
