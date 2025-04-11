@@ -104,12 +104,12 @@ function initializeWorker(botUsername, first) {
         });
         worker.on("error", (error) => {
             console.error(`[MASTER] Worker error: ${error}`);
-            activeWorkers.delete(botUsername);
+            activeWorkers.delete(worker);
             reject(error);
         });
         worker.on("exit", (exitCode) => {
             console.error(`[MASTER] Worker stopped with exit code ${exitCode}`);
-            activeWorkers.delete(botUsername);
+            activeWorkers.delete(worker);
             reject(exitCode);
         });
 
