@@ -2,6 +2,7 @@ import vec3 from "vec3";
 import { Worker } from "worker_threads";
 import { register, Gauge } from "prom-client";
 import express from "express";
+import { StrategyFactory } from "./spawnStrategies/strategyFactory.js";
 
 // Bot connection configuration
 const botConfig = {
@@ -11,6 +12,7 @@ const botConfig = {
 };
 
 // Bot behavior and spawning settings
+const spawnStrategyName = process.env.SPAWN_STRATEGY || "defaultStrategy";
 const botSpawnInterval = parseInt(process.env.BOT_JOIN_INTERVAL) || 100;
 const botCountCheckInterval = parseInt(process.env.BOT_COUNT_INTERVAL) || 1000;
 const maxBotCount = parseInt(process.env.BOT_COUNT) || 1;
@@ -120,26 +122,16 @@ function initializeWorker(botUsername, first) {
     });
 }
 
-// Main function to manage bot spawning
-async function manageBotSpawning() {
-    let first = true;
-    while (true) {
-        const timestamp = Date.now();
-        console.log(`[MASTER] ${timestamp} - Active bots: ${activeWorkers.size}`);
+// Manage bot spawning (create strategy and start it)
+const strategyConfig = {
+    botSpawnInterval,
+    botCountCheckInterval,
+    maxBotCount,
+    activeWorkers,
+    delay,
+    initializeWorker,
+};
 
-        if (activeWorkers.size < maxBotCount) {
-            console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${activeWorkers.size} -> Spawning new bot!`);
-            const botUsername = `b${timestamp}`;
-            await initializeWorker(botUsername, first);
-            first = false;
-            const remainingTime = Math.max(0, botSpawnInterval - (Date.now() - timestamp));
-            await delay(remainingTime);
-        } else {
-            console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${activeWorkers.size} --> Sufficient bots connected`);
-            await delay(botCountCheckInterval);
-        }
-    }
-}
-
-// Start the bot management loop
-manageBotSpawning();
+// Create and run strategy
+const strategy = StrategyFactory.create(spawnStrategyName, strategyConfig);
+strategy.start();
