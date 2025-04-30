@@ -11,19 +11,21 @@ const botConfig = {
     version: process.env.MC_VERSION || "1.20.1",
 };
 
-// Bot behavior and spawning settings
+// Spawn settings
 const spawnStrategyName = process.env.SPAWN_STRATEGY || "defaultStrategy";
 const botSpawnInterval = parseInt(process.env.BOT_JOIN_INTERVAL) || 100;
 const botCountCheckInterval = parseInt(process.env.BOT_COUNT_INTERVAL) || 1000;
-const maxBotCount = parseInt(process.env.BOT_COUNT) || 1;
+const maxBotCount = parseInt(process.env.BOT_COUNT) || 1000;
+// const spawnBatchSize = parseInt(process.env.SPAWN_BATCH_SIZE) || 1;
+// Bot behavior settings
 const movementBoxWidth = parseInt(process.env.BOX_WIDTH) || 10 * 16;
 const boxCenterX = parseInt(process.env.BOX_CENTER_X) || NaN;
 const boxCenterZ = parseInt(process.env.BOX_CENTER_Z) || NaN;
-const walkUpdateInterval = parseInt(process.env.WALK_UPDATE_INTERVAL) || 2000;
-const placeBlockInterval = parseInt(process.env.PLACE_BLOCK_INTERVAL) || 5000;
-const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000;
-const attackInterval = parseInt(process.env.ATTACK_INTERVAL) || 10000;
-const attackCooldown = parseInt(process.env.ATTACK_COOLDOWN) || 10000;
+const walkUpdateInterval = parseInt(process.env.WALK_UPDATE_INTERVAL) || 2000; // simple-walk bot
+const placeBlockInterval = parseInt(process.env.PLACE_BLOCK_INTERVAL) || 5000; // miner bot
+const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000; // miner bot
+const attackInterval = parseInt(process.env.ATTACK_INTERVAL) || 10000; // pvp bot
+const attackCooldown = parseInt(process.env.ATTACK_COOLDOWN) || 10000; // pvp bot
 const prometheusPort = parseInt(process.env.PROMETHEUS_PORT) || 9090;
 const enableResponseMetric = process.env.RESPONSE_METRIC === "true";
 

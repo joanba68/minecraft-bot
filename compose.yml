@@ -39,8 +39,9 @@ services:
     environment:
       NODE_ENV: production
       SPAWN_STRATEGY: default
+      # SPAWN_BATCH_SIZE: 5
       BOT_COUNT: 8
-      BOT_JOIN_INTERVAL: 100
+      BOT_JOIN_INTERVAL: 40000
       BOT_HOST: "10.244.209.232"
       BOT_PORT: 25565
       BOX_WIDTH: 800
