@@ -1,15 +1,18 @@
 // factory to create a strategy instance based on the provided strategy name
 
-import { DefaultStrategy } from './defaultSpawn.js';
-import { SimpleStrategy } from './simpleSpawn.js';
+import { IntervalStrategy } from './intervalSpawn.js';
+import { BurstStrategy } from './burstSpawn.js';
+import { BatchStrategy } from './batchSpawn.js';
 
 export class StrategyFactory {
     static create(strategyName, context) {
         switch (strategyName.toLowerCase()) {
-            case 'default':
-                return new DefaultStrategy(context);
-            case 'simple':
-                return new SimpleStrategy(context);
+            case 'interval':
+                return new IntervalStrategy(context);
+            case 'burst':
+                return new BurstStrategy(context);
+            case 'batch':
+                return new BatchStrategy(context);
             default:
                 throw new Error(`Unknown strategy: ${strategyName}`);
         }
