@@ -12,11 +12,9 @@ const botConfig = {
 };
 
 // Spawn settings
-const spawnStrategyName = process.env.SPAWN_STRATEGY || "defaultStrategy";
-const botSpawnInterval = parseInt(process.env.BOT_JOIN_INTERVAL) || 100;
+const spawnStrategyName = process.env.SPAWN_STRATEGY || "interval";
 const botCountCheckInterval = parseInt(process.env.BOT_COUNT_INTERVAL) || 1000;
 const maxBotCount = parseInt(process.env.BOT_COUNT) || 1000;
-// const spawnBatchSize = parseInt(process.env.SPAWN_BATCH_SIZE) || 1;
 // Bot behavior settings
 const movementBoxWidth = parseInt(process.env.BOX_WIDTH) || 10 * 16;
 const boxCenterX = parseInt(process.env.BOX_CENTER_X) || NaN;
@@ -126,7 +124,6 @@ function initializeWorker(botUsername, first) {
 
 // Manage bot spawning (create strategy and start it)
 const strategyConfig = {
-    botSpawnInterval,
     botCountCheckInterval,
     maxBotCount,
     activeWorkers,
