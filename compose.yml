@@ -2,7 +2,7 @@ services:
   minecraft-bot:
     build:
       context: .
-    #env_file: .env
+    env_file: .env
     environment:
       NODE_ENV: production
       BOT_PORT: 25565
