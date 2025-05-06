@@ -1,90 +1,17 @@
 services:  
-  # bot-1:
-  #   build:
-  #     context: .
-  #   environment:
-  #     NODE_ENV: production
-  #     SPAWN_STRATEGY: interval
-  #     BOT_COUNT: 10
-  #     BOT_HOST: "10.108.126.51"
-  #     BOT_PORT: 25565
-  #     BOX_WIDTH: 1600
-  #     BOX_CENTER_X: 0
-  #     BOX_CENTER_Z: 0
-  #     WORKER_TO_RUN: idle
-  #   deploy:
-  #     replicas: 1
-  #   ports:
-  #     - "9090:9090" 
-  # bot-2:
-  #   build:
-  #     context: .
-  #   environment:
-  #     NODE_ENV: production
-  #     SPAWN_STRATEGY: interval
-  #     BOT_COUNT: 10
-  #     BOT_HOST: "10.108.126.51"
-  #     BOT_PORT: 25565
-  #     BOX_WIDTH: 1600
-  #     BOX_CENTER_X: 0
-  #     BOX_CENTER_Z: 0
-  #     WORKER_TO_RUN: walk
-  #   deploy:
-  #     replicas: 1
-  bot-3:
+  minecraft-bot:
     build:
       context: .
+    #env_file: .env
     environment:
       NODE_ENV: production
-      SPAWN_STRATEGY: batch
-      BOT_COUNT: 4
-      BOT_HOST: "10.244.209.197"
       BOT_PORT: 25565
       BOX_WIDTH: 800
       BOX_CENTER_X: 0
       BOX_CENTER_Z: 0
-      WALK_UPDATE_INTERVAL: 2000
       RESPONSE_METRIC: false
       RESPONSE_INTERVAL: 1000
-      WORKER_TO_RUN: simple-walk
     deploy:
       replicas: 1
-  # bot-4:
-  #   build:
-  #     context: .
-  #   environment:
-  #     NODE_ENV: production
-  #     SPAWN_STRATEGY: interval
-  #     BOT_COUNT: 5
-  #     BOT_HOST: "10.244.209.197"
-  #     BOT_PORT: 25565
-  #     BOX_WIDTH: 800
-  #     BOX_CENTER_X: 0
-  #     BOX_CENTER_Z: 0
-  #     WALK_UPDATE_INTERVAL: 2000
-  #     PLACE_BLOCK_INTERVAL: 5000
-  #     RESPONSE_METRIC: false
-  #     RESPONSE_INTERVAL: 1000
-  #     WORKER_TO_RUN: miner
-  #   deploy:
-  #     replicas: 1
-  # bot-5:
-  #   build:
-  #     context: .
-  #   environment:
-  #     NODE_ENV: production
-  #     SPAWN_STRATEGY: interval
-  #     BOT_COUNT: 8
-  #     BOT_HOST: "10.244.209.197"
-  #     BOT_PORT: 25565
-  #     BOX_WIDTH: 800
-  #     BOX_CENTER_X: 0
-  #     BOX_CENTER_Z: 0
-  #     WALK_UPDATE_INTERVAL: 2000
-  #     RESPONSE_METRIC: false
-  #     RESPONSE_INTERVAL: 1000
-  #     ATTACK_COOLDOWN: 5000
-  #     ATTACK_DURATION: 10000
-  #     WORKER_TO_RUN: pvp
-  #   deploy:
-  #     replicas: 1
+    ports:
+      - "9090:9090"
