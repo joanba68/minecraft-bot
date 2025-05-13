@@ -9,7 +9,7 @@ Different types of bots have been designed, each with different behaviors that c
 - ```BOT_HOST``` - Minecraft server address the bots should connect to
 - ```BOT_PORT``` - Port to connect to the Minecraft server
 
-### BOT WORKERS
+### Workers
 
 - ```WORKER_TO_RUN``` - Type of bot to run [simple-walk|miner|pvp]
 - ```BOT_COUNT``` - Number of bots to spawn
@@ -26,7 +26,7 @@ Different types of bots have been designed, each with different behaviors that c
 - ```RESPONSE_METRIC``` - [true|false] enable or disable the latency metric (bots will or will not send messages in the chat)
 - ```RESPONSE_INTERVAL``` - Time interval that must pass between sending one chat message and the next
 
-### SPAWN BEHAVIOR
+### Spawn Behavior
 
 - ```SPAWN_STRATEGY``` - Spawn strategy to follow for connecting bots to the server [interval|burst|batch]
 - ```SPAWN_BATCH_SIZE``` - (batch strategy) number of bots in the batch
@@ -34,7 +34,7 @@ Different types of bots have been designed, each with different behaviors that c
 - ```BOT_SPAWN_INTERVAL``` - (interval strategy) waiting time interval between the connection of one bot and the next
 - ```BOT_COUNT_INTERVAL``` - How often the bots' connection to the server should be checked (to verify if all are still connected)
 
-### BOT BEHAVIOR
+### Bot Behavior
 
 - ```WALK_UPDATE_INTERVAL``` - (simple-walk bot) how often the bot should check its position to move toward the assigned point
 - ```PLACE_BLOCK_INTERVAL``` - (miner bot) time interval between placing one block and the next
