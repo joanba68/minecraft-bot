@@ -3,6 +3,7 @@
 import { IntervalStrategy } from './intervalSpawn.js';
 import { BurstStrategy } from './burstSpawn.js';
 import { BatchStrategy } from './batchSpawn.js';
+import { TestStrategy } from './testSpawn.js';
 
 export class StrategyFactory {
     static create(strategyName, context) {
