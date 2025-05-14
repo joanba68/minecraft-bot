@@ -26,9 +26,13 @@ Bots connect one by one in an orderly manner. After one bot connects, there is a
 
 Bots connect in batches. All bots in a batch connect simultaneously in parallel. Once a batch has connected, there is a waiting interval before launching the next batch of bots to connect.
 
+> If the bot batch is larger than 10, it will be split into smaller batches, since connecting more than 10 bots at once may cause a server error. For example, if a batch of 15 bots is desired with a 40-second interval, it will be split into two batches—one of 10 and another of 5. The first batch will be launched, and once those bots have connected, the remaining bots will be launched. After this group has connected, the system will wait the 40-second interval before launching the next batch.
+
 ### Burst Strategy
 
 All bots connect to the server at once in parallel. There are no delays between one connection and the next.
+
+> The number of bots that can be launched in parallel to the server is limited to 10, as a higher number of simultaneous connections may cause a server error. If the number of bots to be launched exceeds this limit, they will be split into batches of up to 10 bots each. Bots will connect once the bots from the previous batch have successfully connected.
 
 ## Environment Variables
 
