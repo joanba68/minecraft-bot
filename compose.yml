@@ -9,7 +9,7 @@ services:
       BOX_WIDTH: 800
       BOX_CENTER_X: 0
       BOX_CENTER_Z: 0
-      RESPONSE_METRIC: false
+      RESPONSE_METRIC: true
       RESPONSE_INTERVAL: 1000
     deploy:
       replicas: 1

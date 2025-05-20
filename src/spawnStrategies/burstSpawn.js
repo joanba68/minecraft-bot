@@ -11,7 +11,10 @@ export class BurstStrategy{
             activeWorkers,
             delay,
             initializeWorker,
+            responseBotCount
         } = this.context;
+
+        let botMetricCount = responseBotCount;
 
         const spawnBatch = async (count, isFirst = false) => {
             const promises = [];
@@ -19,7 +22,12 @@ export class BurstStrategy{
             
             for (let i = 0; i < batchSize; i++) {
                 const botUsername = `b${Date.now()}_${i}`;
-                promises.push(initializeWorker(botUsername, isFirst && i === 0));
+                const isMetricBot = botMetricCount > 0;
+                promises.push(initializeWorker(botUsername, isMetricBot));
+                if (isMetricBot) {
+                    botMetricCount--;
+                    console.log(`[MASTER] Metric bot spawned: ${botUsername}`);
+                }
             }
             
             await Promise.all(promises);
@@ -27,7 +35,7 @@ export class BurstStrategy{
             
             if (count > batchSize) {
                 await delay(1000);
-                await spawnBatch(count - batchSize, false);
+                await spawnBatch(count - batchSize);
             }
         };
 
@@ -38,7 +46,7 @@ export class BurstStrategy{
             if (activeWorkers.size < maxBotCount) {
                 const missingBots = maxBotCount - activeWorkers.size;
                 console.log(`[MASTER] Missing bots: ${missingBots}. Spawning new bots...`);
-                await spawnBatch(missingBots, false);
+                await spawnBatch(missingBots);
             } else {
                 await delay(botCountCheckInterval);
                 console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${activeWorkers.size} --> Sufficient bots connected`);

@@ -11,18 +11,26 @@ export class BatchStrategy{
             activeWorkers,
             delay,
             initializeWorker,
+            responseBotCount
         } = this.context;
 
         const spawnBatchSize = parseInt(process.env.SPAWN_BATCH_SIZE) || 10;
         const spawnBatchDelay = parseInt(process.env.SPAWN_BATCH_DELAY) || 40000;
 
-        const safeSpawn = async (count, isFirst = false) => {
+        let botMetricCount = responseBotCount;
+
+        const safeSpawn = async (count) => {
             const toSpawn = Math.min(count, this.MAX_CONCURRENT_CONNECTIONS);
             const promises = [];
             
             for (let i = 0; i < toSpawn; i++) {
                 const botUsername = `b${Date.now()}_${i}`;
-                promises.push(initializeWorker(botUsername, isFirst && i === 0));
+                const isMetricBot = botMetricCount > 0;
+                promises.push(initializeWorker(botUsername, isMetricBot));
+                if (isMetricBot) {
+                    botMetricCount--;
+                    console.log(`[MASTER] Metric bot spawned: ${botUsername}`);
+                }
             }
             
             await Promise.all(promises);
@@ -30,7 +38,7 @@ export class BatchStrategy{
             
             if (count > toSpawn) {
                 await delay(1000);
-                await safeSpawn(count - toSpawn, false);
+                await safeSpawn(count - toSpawn);
             }
         };
 
@@ -39,7 +47,7 @@ export class BatchStrategy{
             if (currentBotCount < maxBotCount) {
                 console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${currentBotCount} -> Spawning new batch of bots!`);
                 const toSpawn = Math.min(maxBotCount - currentBotCount, spawnBatchSize);
-                await safeSpawn(toSpawn, currentBotCount === 0);
+                await safeSpawn(toSpawn);
 
                 if (activeWorkers.size < maxBotCount) {
                     console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${activeWorkers.size} -> Waiting for next batch...`);

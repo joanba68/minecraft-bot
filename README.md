@@ -57,6 +57,7 @@ All bots connect to the server at once in parallel. There are no delays between 
 - ```PROMETHEUS_PORT```
 - ```RESPONSE_METRIC``` - [true|false] enable or disable the latency metric (bots will or will not send messages in the chat)
 - ```RESPONSE_INTERVAL``` - Time interval that must pass between sending one chat message and the next
+- ```RESPONSE_BOT_COUNT``` - Number of bots (from the total) that will send a message to the game chat (only if the response metric is enabled)
 
 ### Spawn Behavior
 

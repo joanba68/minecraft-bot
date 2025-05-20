@@ -3,6 +3,7 @@ import { Worker } from "worker_threads";
 import { register, Gauge } from "prom-client";
 import express from "express";
 import { StrategyFactory } from "./spawnStrategies/strategyFactory.js";
+import { parse } from "path";
 
 // Bot connection configuration
 const botConfig = {
@@ -21,11 +22,12 @@ const boxCenterX = parseInt(process.env.BOX_CENTER_X) || NaN;
 const boxCenterZ = parseInt(process.env.BOX_CENTER_Z) || NaN;
 const walkUpdateInterval = parseInt(process.env.WALK_UPDATE_INTERVAL) || 2000; // simple-walk bot
 const placeBlockInterval = parseInt(process.env.PLACE_BLOCK_INTERVAL) || 5000; // miner bot
-const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000;
 const attackInterval = parseInt(process.env.ATTACK_INTERVAL) || 10000; // pvp bot
 const attackCooldown = parseInt(process.env.ATTACK_COOLDOWN) || 10000; // pvp bot
 const prometheusPort = parseInt(process.env.PROMETHEUS_PORT) || 9090;
-const enableResponseMetric = process.env.RESPONSE_METRIC === "true";
+const enableResponseMetric = parseInt(process.env.RESPONSE_METRIC) || true; // latency metric
+const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000; // latency metric
+const responseBotCount = parseInt(process.env.RESPONSE_BOT_COUNT) || 5; // latency metric
 
 // Worker script selection
 const workerScript = process.env.WORKER_TO_RUN || "idle";
@@ -129,6 +131,7 @@ const strategyConfig = {
     activeWorkers,
     delay,
     initializeWorker,
+    responseBotCount
 };
 
 // Create and run strategy
