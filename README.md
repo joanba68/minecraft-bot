@@ -4,6 +4,10 @@ Different types of bots have been designed, each with different behaviors that c
 
 ## Types of bots
 
+### Idle Bot
+
+Connects to the server and remains idle.
+
 ### Simple-walk Bot
 
 This bot moves randomly within a box.
