@@ -40,6 +40,14 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+process.on("SIGTERM", () => {
+    console.log("[MASTER] Received SIGTERM, shutting down...");
+    for (const worker of activeWorkers) {
+        worker.terminate();
+    }
+    process.exit(0);
+});
+
 const app = express();
 
 const metric = new Gauge({
