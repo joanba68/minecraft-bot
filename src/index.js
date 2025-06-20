@@ -25,7 +25,7 @@ const placeBlockInterval = parseInt(process.env.PLACE_BLOCK_INTERVAL) || 5000; /
 const attackInterval = parseInt(process.env.ATTACK_INTERVAL) || 10000; // pvp bot
 const attackCooldown = parseInt(process.env.ATTACK_COOLDOWN) || 10000; // pvp bot
 const prometheusPort = parseInt(process.env.PROMETHEUS_PORT) || 9090;
-const enableResponseMetric = parseInt(process.env.RESPONSE_METRIC) || true; // latency metric
+const enableResponseMetric = process.env.RESPONSE_METRIC === "true"; // latency metric
 const responseInterval = parseInt(process.env.RESPONSE_INTERVAL) || 1000; // latency metric
 const responseBotCount = parseInt(process.env.RESPONSE_BOT_COUNT) || 5; // latency metric
 
