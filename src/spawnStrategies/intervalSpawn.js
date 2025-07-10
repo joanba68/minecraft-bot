@@ -24,8 +24,9 @@ export class IntervalStrategy{
     
             if (activeWorkers.size < maxBotCount) {
                 console.log(`[MASTER] Target bots: ${maxBotCount}, current bots: ${activeWorkers.size} -> Spawning new bot!`);
+                const timestampStr = timestamp.toString().slice(4);
                 const randomPart = Math.floor(Math.random() * 1e6);
-                const botUsername = `b${timestamp}_${randomPart}`;
+                const botUsername = `${timestampStr}_${randomPart}`;
                 const isMetricBot = botMetricCount > 0;
                 await initializeWorker(botUsername, isMetricBot);
                 if (isMetricBot) {
